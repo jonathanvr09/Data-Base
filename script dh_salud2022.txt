@@ -1,0 +1,84 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema dh_salud2022
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema dh_salud2022
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `dh_salud2022` DEFAULT CHARACTER SET utf8 ;
+USE `dh_salud2022` ;
+
+-- -----------------------------------------------------
+-- Table `dh_salud2022`.`paciente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dh_salud2022`.`paciente` (
+  `idpaciente` INT NOT NULL AUTO_INCREMENT,
+  `id_codigo_Salud` INT NOT NULL,
+  `Nombre` VARCHAR(45) NULL,
+  `Apellido` VARCHAR(45) NULL,
+  PRIMARY KEY (`idpaciente`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dh_salud2022`.`Especialidad`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dh_salud2022`.`Especialidad` (
+  `idEspecialidad` INT NOT NULL,
+  `detalle` VARCHAR(45) NULL,
+  PRIMARY KEY (`idEspecialidad`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dh_salud2022`.`Medico`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dh_salud2022`.`Medico` (
+  `idMedico` INT NOT NULL,
+  `Matricula` INT NULL,
+  `Nombre` VARCHAR(45) NULL,
+  `Apellido` VARCHAR(45) NULL,
+  `Especialidad_idEspecialidad` INT NOT NULL,
+  PRIMARY KEY (`idMedico`, `Especialidad_idEspecialidad`),
+  INDEX `fk_Medico_Especialidad1_idx` (`Especialidad_idEspecialidad` ASC) VISIBLE,
+  CONSTRAINT `fk_Medico_Especialidad1`
+    FOREIGN KEY (`Especialidad_idEspecialidad`)
+    REFERENCES `dh_salud2022`.`Especialidad` (`idEspecialidad`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `dh_salud2022`.`Turno_cita`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dh_salud2022`.`Turno_cita` (
+  `idTurno_cita` INT NOT NULL,
+  `dia_hora` DATETIME NULL,
+  `paciente_idpaciente` INT NOT NULL,
+  `Medico_idMedico` INT NOT NULL,
+  PRIMARY KEY (`idTurno_cita`, `paciente_idpaciente`, `Medico_idMedico`),
+  INDEX `fk_Turno_cita_paciente_idx` (`paciente_idpaciente` ASC) VISIBLE,
+  INDEX `fk_Turno_cita_Medico1_idx` (`Medico_idMedico` ASC) VISIBLE,
+  CONSTRAINT `fk_Turno_cita_paciente`
+    FOREIGN KEY (`paciente_idpaciente`)
+    REFERENCES `dh_salud2022`.`paciente` (`idpaciente`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Turno_cita_Medico1`
+    FOREIGN KEY (`Medico_idMedico`)
+    REFERENCES `dh_salud2022`.`Medico` (`idMedico`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
